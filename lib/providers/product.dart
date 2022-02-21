@@ -1,25 +1,24 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
-// Defining the products structure and using ChangeNotifier for listening to changes
 class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
   final double price;
   final String imageUrl;
-  bool isFavourite;
+  bool isFavorite;
+
   Product({
     @required this.id,
     @required this.title,
     @required this.description,
-    @required this.imageUrl,
-    this.isFavourite=false,
     @required this.price,
+    @required this.imageUrl,
+    this.isFavorite = false,
   });
 
-  // Marks a product as favourite or not
   void toggleFavoriteStatus() {
-    isFavourite = !isFavourite;
+    isFavorite = !isFavorite;
     notifyListeners();
   }
 }

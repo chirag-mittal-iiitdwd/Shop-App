@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
-import "package:provider/provider.dart";
+import 'package:provider/provider.dart';
 
-import "../providers/products.dart";
+import '../providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   // final String title;
-  // ProductDetailScreen({this.title});
+  // final double price;
+
+  // ProductDetailScreen(this.title, this.price);
   static const routeName = '/product-detail';
 
   @override
   Widget build(BuildContext context) {
-    final productId = ModalRoute.of(context).settings.arguments as String;
-
-    // Since this route is a part of material dart in main.dart we can use the data here
-    final loadedProduct =
-        Provider.of<Products>(context, listen: false).findById(productId);
+    final productId =
+        ModalRoute.of(context).settings.arguments as String; // is the id!
+    final loadedProduct = Provider.of<Products>(
+      context,
+      listen: false,
+    ).findById(productId);
     return Scaffold(
       appBar: AppBar(
         title: Text(loadedProduct.title),
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
+          children: <Widget>[
             Container(
-              width: double.infinity,
               height: 300,
+              width: double.infinity,
               child: Image.network(
                 loadedProduct.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Text(
-              "\$${loadedProduct.price}",
+              '\$${loadedProduct.price}',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 20,
@@ -51,7 +52,7 @@ class ProductDetailScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),
-            ),
+            )
           ],
         ),
       ),

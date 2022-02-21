@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import './cart.dart';
 
-// Structure of an Order
 class OrderItem {
   final String id;
   final double amount;
@@ -10,30 +9,27 @@ class OrderItem {
   final DateTime dateTime;
 
   OrderItem({
-    @required this.amount,
-    @required this.dateTime,
     @required this.id,
+    @required this.amount,
     @required this.products,
+    @required this.dateTime,
   });
 }
 
-// Actual Orders that will be used
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
 
-  // Returns all current orders
   List<OrderItem> get orders {
     return [..._orders];
   }
 
-  // This function creates the order and stores it into the orders array
   void addOrder(List<CartItem> cartProducts, double total) {
     _orders.insert(
       0,
       OrderItem(
+        id: DateTime.now().toString(),
         amount: total,
         dateTime: DateTime.now(),
-        id: DateTime.now().toString(),
         products: cartProducts,
       ),
     );
