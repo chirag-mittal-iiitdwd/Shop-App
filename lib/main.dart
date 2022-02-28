@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+
+      // Defining these providers for lisening to changes in the data
       providers: [
         ChangeNotifierProvider.value(
           value: Products(),
