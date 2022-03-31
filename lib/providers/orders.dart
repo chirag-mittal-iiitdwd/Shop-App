@@ -41,7 +41,6 @@ class Orders with ChangeNotifier {
       return;
     }
 
-
     extractedData.forEach(
       (orderId, orderData) {
         loadedOrders.add(
