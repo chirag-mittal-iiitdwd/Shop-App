@@ -21,16 +21,20 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String authToken;
+  Orders(this.authToken, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    var url = Uri.https(
-      'shop-app-d0404-default-rtdb.firebaseio.com',
-      '/orders.json',
-    );
+    Uri url = Uri.parse(
+        'https://shop-app-d0404-default-rtdb.firebaseio.com/orders.json?auth=$authToken');
+    // var url = Uri.https(
+    //   'shop-app-d0404-default-rtdb.firebaseio.com',
+    //   '/orders.json',
+    // );
 
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
@@ -48,22 +52,24 @@ class Orders with ChangeNotifier {
             id: orderId,
             amount: orderData['amount'],
             dateTime: DateTime.parse(orderData['dateTime']),
-            products: (orderData['products'] as List<dynamic>).map(
-              // (item) {
-              //   CartItem(
-              //     id: item['id'],
-              //     title: item['title'],
-              //     quantity: item['quantity'],
-              //     price: item['price'],
-              //   );
-              // },
-              (item) => CartItem(
-                      id: item['id'],
-                      price: item['price'],
-                      quantity: item['quantity'],
-                      title: item['title'],
-                    ),
-            ).toList(),
+            products: (orderData['products'] as List<dynamic>)
+                .map(
+                  // (item) {
+                  //   CartItem(
+                  //     id: item['id'],
+                  //     title: item['title'],
+                  //     quantity: item['quantity'],
+                  //     price: item['price'],
+                  //   );
+                  // },
+                  (item) => CartItem(
+                    id: item['id'],
+                    price: item['price'],
+                    quantity: item['quantity'],
+                    title: item['title'],
+                  ),
+                )
+                .toList(),
           ),
         );
       },
@@ -75,10 +81,8 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final timeStamp = DateTime.now();
 
-    var url = Uri.https(
-      'shop-app-d0404-default-rtdb.firebaseio.com',
-      '/orders.json',
-    );
+    Uri url = Uri.parse(
+        'https://shop-app-d0404-default-rtdb.firebaseio.com/orders.json?auth=$authToken');
 
     final response = await http.post(
       url,
