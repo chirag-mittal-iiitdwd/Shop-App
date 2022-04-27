@@ -9,7 +9,9 @@ class Products with ChangeNotifier {
   List<Product> _items = [];
 
   final String authToken;
-  Products(this.authToken, this._items);
+  final String userId;
+
+  Products(this.authToken, this.userId, this._items);
   List<Product> get items {
     return [..._items];
   }
@@ -22,13 +24,15 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     // final url = Uri.https(
     //   'shop-app-d0404-default-rtdb.firebaseio.com',
     //   '/products.json?auth=$authToken',
     // );
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     Uri url = Uri.parse(
-        'https://shop-app-d0404-default-rtdb.firebaseio.com/products.json?auth=$authToken');
+        'https://shop-app-d0404-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString');
 
     try {
       final response = await http.get(url);
@@ -37,6 +41,11 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
+      url = Uri.parse(
+          'https://shop-app-d0404-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
+      final favouriteResponse = await http.get(url);
+      final favouriteData = json.decode(favouriteResponse.body);
+
       final List<Product> loadedProducts = [];
       extractedData.forEach((productId, productData) {
         loadedProducts.add(
@@ -45,7 +54,9 @@ class Products with ChangeNotifier {
             title: productData['title'],
             description: productData['description'],
             price: productData['price'],
-            isFavorite: productData['isFavourite'],
+            isFavorite: favouriteData == null
+                ? false
+                : favouriteData[productId] ?? false,
             imageUrl: productData['imageUrl'],
           ),
         );
@@ -71,7 +82,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavourite': product.isFavorite,
+            'creatorId': userId,
           },
         ),
       );
